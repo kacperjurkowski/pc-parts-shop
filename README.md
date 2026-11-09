@@ -8,7 +8,7 @@ Sklep internetowy z podzespołami komputerowymi i konfiguratorem zgodności. Pro
 2. Uruchom instalator i wybierz typ instalacji **Custom**, a następnie zaznacz:
    - `MySQL Servers → MySQL Server → MySQL Server 8.0 → MySQL Server 8.0.46 – X64`,
    - `Applications → MySQL Workbench → MySQL Workbench 8.0 → wersja X64`.
-3. Kliknij **Execute**, aby zainstalować wybrane produkty, a następnie przejdź do konfiguracji serwera.
+3. Kliknij `Execute`, aby zainstalować wybrane produkty, a następnie przejdź do konfiguracji serwera.
 4. W konfiguracji serwera:
    - `Config Type:` Development Computer, port 3306,
    - `Authentication Method:` pozostaw zalecaną opcję (Use Strong Password Encryption),
@@ -24,3 +24,17 @@ W głównym folderze projektu wykonaj:
 ```bash
 python -m pip install -r requirements.txt
 ```
+
+### Konfiguracja połączenia z bazą
+
+Skopiuj plik **.env.example** jako **.env** i uzupełnij dane dostępowe:
+
+```
+DB_HOST=localhost
+DB_PORT=3306
+DB_USER=root
+DB_PASSWORD=twoje_haslo
+DB_NAME=sklep_pc
+```
+
+Plik **.env** jest wykluczony z repozytorium (`.gitignore`) i nie powinien być publikowany.
