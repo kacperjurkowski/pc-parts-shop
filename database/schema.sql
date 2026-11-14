@@ -75,3 +75,86 @@ CREATE TABLE PozycjaKonfiguracji (
     FOREIGN KEY(konfiguracjaID) REFERENCES Konfiguracja(konfiguracjaID),    -- pozycja należy do istniejącego zestawu
     FOREIGN KEY(produktID) REFERENCES Produkt(produktID)                    -- pozycja dotyczy istniejącego produktu
 );  
+
+CREATE TABLE Opinia (
+    opiniaID int PRIMARY KEY AUTO_INCREMENT,                        -- klucz główny opiniaID
+    uzytkownikID int NOT NULL,                                      -- klucz obcy uzytkownikID z tabeli Uzytkownik
+    produktID int NOT NULL,                                         -- klucz obcy produktID z tabeli Produkt
+    tekst VARCHAR(500),                                             -- tekst string (treść recenzji, maksymalnie 500 znaków)
+    ocena int NOT NULL,                                             -- ocena int (punktowa od 1 do 5)
+    created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,         -- pole audytowe w postaci RRRR-MM-DD HH:MM:SS
+    UNIQUE(uzytkownikID, produktID),                                -- użytkownik może wystawić tylko jedną opinię dla danego produktu
+    CHECK(ocena BETWEEN 1 AND 5),                                   -- tylko ocena od 1 do 5
+    FOREIGN KEY(uzytkownikID) REFERENCES Uzytkownik(uzytkownikID),  -- opinia należy do istniejącego użytkownika
+    FOREIGN KEY(produktID) REFERENCES Produkt(produktID)            -- opinia dotyczy istniejącego produktu
+);
+
+CREATE TABLE SpecyfikacjaProcesor (
+    procesorID int PRIMARY KEY AUTO_INCREMENT,                      -- klucz główny procesorID
+    produktID int NOT NULL,                                         -- klucz obcy produktID z tabeli Produkt
+    socket VARCHAR(50) NOT NULL,                                    -- socket string (np. AM5, LGA1700)
+    liczbaRdzeni int NOT NULL,                                      -- liczbaRdzeni int
+    typRAM VARCHAR(20) NOT NULL,                                    -- typRAM string (np. DDR4, DDR5)
+    tdp int NOT NULL,                                               -- tdp int (pobór mocy w watach)
+    UNIQUE(produktID),                                              -- relacja 1:1 z tabelą Produkt
+    CHECK(liczbaRdzeni > 0),                                        -- tylko liczbaRdzeni > 0
+    CHECK(tdp > 0),                                                 -- tylko tdp > 0
+    FOREIGN KEY(produktID) REFERENCES Produkt(produktID)            -- specyfikacja dotyczy istniejącego produktu
+);
+
+CREATE TABLE SpecyfikacjaPlyty (
+    plytaID int PRIMARY KEY AUTO_INCREMENT,                         -- klucz główny plytaID
+    produktID int NOT NULL,                                         -- klucz obcy produktID z tabeli Produkt
+    socket VARCHAR(50) NOT NULL,                                    -- socket string (gniazdo procesora)
+    typRAM VARCHAR(20) NOT NULL,                                    -- typRAM string (obsługiwany standard RAM)
+    format VARCHAR(20) NOT NULL,                                    -- format string (np. ATX, microATX, Mini-ITX)
+    typInterfejsuDysku VARCHAR(50) NOT NULL,                        -- typInterfejsuDysku string (np. M.2 NVMe, SATA)
+    UNIQUE(produktID),                                              -- relacja 1:1 z tabelą Produkt
+    FOREIGN KEY(produktID) REFERENCES Produkt(produktID)            -- specyfikacja dotyczy istniejącego produktu
+);
+
+CREATE TABLE SpecyfikacjaKartyGraficznej (
+    kartaGraficznaID int PRIMARY KEY AUTO_INCREMENT,                -- klucz główny kartaGraficznaID
+    produktID int NOT NULL,                                         -- klucz obcy produktID z tabeli Produkt
+    pamiecVRAM int NOT NULL,                                        -- pamiecVRAM int (pojemność pamięci w GB)
+    ukladGraficzny VARCHAR(100) NOT NULL,                           -- ukladGraficzny string (model GPU)
+    tdp int NOT NULL,                                               -- tdp int (pobór mocy w watach)
+    UNIQUE(produktID),                                              -- relacja 1:1 z tabelą Produkt
+    CHECK(pamiecVRAM > 0),                                          -- tylko pamiecVRAM > 0
+    CHECK(tdp > 0),                                                 -- tylko tdp > 0
+    FOREIGN KEY(produktID) REFERENCES Produkt(produktID)            -- specyfikacja dotyczy istniejącego produktu
+);
+
+CREATE TABLE SpecyfikacjaZasilacza (
+    zasilaczID int PRIMARY KEY AUTO_INCREMENT,                      -- klucz główny zasilaczID
+    produktID int NOT NULL,                                         -- klucz obcy produktID z tabeli Produkt
+    moc int NOT NULL,                                               -- moc int (moc zasilacza w watach)
+    certyfikat VARCHAR(50),                                         -- certyfikat string (np. 80 Plus Gold)
+    UNIQUE(produktID),                                              -- relacja 1:1 z tabelą Produkt
+    CHECK(moc > 0),                                                 -- tylko moc > 0
+    FOREIGN KEY(produktID) REFERENCES Produkt(produktID)            -- specyfikacja dotyczy istniejącego produktu
+);
+
+CREATE TABLE SpecyfikacjaRAM (
+    ramID int PRIMARY KEY AUTO_INCREMENT,                           -- klucz główny ramID
+    produktID int NOT NULL,                                         -- klucz obcy produktID z tabeli Produkt
+    typRAM VARCHAR(20) NOT NULL,                                    -- typRAM string (np. DDR4, DDR5)
+    pojemnosc int NOT NULL,                                         -- pojemnosc int (pojemność w GB)
+    taktowanie int NOT NULL,                                        -- taktowanie int (częstotliwość w MHz)
+    UNIQUE(produktID),                                              -- relacja 1:1 z tabelą Produkt
+    CHECK(pojemnosc > 0),                                           -- tylko pojemnosc > 0
+    CHECK(taktowanie > 0),                                          -- tylko taktowanie > 0
+    FOREIGN KEY(produktID) REFERENCES Produkt(produktID)            -- specyfikacja dotyczy istniejącego produktu
+);
+
+CREATE TABLE SpecyfikacjaDysku (
+    dyskID int PRIMARY KEY AUTO_INCREMENT,                          -- klucz główny dyskID
+    produktID int NOT NULL,                                         -- klucz obcy produktID z tabeli Produkt
+    typInterfejsuDysku VARCHAR(50) NOT NULL,                        -- typInterfejsuDysku string (np. M.2 NVMe, SATA III)
+    pojemnosc int NOT NULL,                                         -- pojemnosc int (pojemność w GB)
+    predkoscOdczytu int NOT NULL,                                   -- predkoscOdczytu int (prędkość odczytu w MB/s)
+    UNIQUE(produktID),                                              -- relacja 1:1 z tabelą Produkt
+    CHECK(pojemnosc > 0),                                           -- tylko pojemnosc > 0
+    CHECK(predkoscOdczytu > 0),                                     -- tylko predkoscOdczytu > 0
+    FOREIGN KEY(produktID) REFERENCES Produkt(produktID)            -- specyfikacja dotyczy istniejącego produktu
+);
